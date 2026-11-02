@@ -4,22 +4,35 @@ using System.Numerics;
 namespace PortalGame;
 
 public class Player : GameObject {
+    Tether targetTether;
     const float airResistance = 0.5f; // TODO: for prototyping only. maybe this belongs in the GameObject class instead
 
-    public Player(Vector2 pos, Vector2 size) : base(pos, size){}
+    public Player(Vector2 pos, Vector2 size, Tether tether) : base(pos, size){
+        targetTether = tether;
+    }
 
-    // TODO: make accel dependent on gravity from physics simulation
     public override void Update() {
 
-        // apply air resistance
-        if (vel.X > 0) {
-            vel.X = Math.Max(0, vel.X - airResistance);
+        // cancel all other physics calculations if attached to tether
+        if (targetTether.isActive) {
+            vel = targetTether.endPointVel;
+            accel.X = 0;
+            accel.Y = 0;
         }
-        else if (vel.X < 0) {
-            vel.X = Math.Min(0, vel.X + airResistance);
-        }
+        else {
+            // TODO: make accel dependent on gravity from physics simulation
 
-        accel.Y = 1;
+            accel.Y = 0.8f;
+
+            // gradually slow down player
+            if (vel.X > 0) {
+                vel.X = Math.Max(0, vel.X - airResistance);
+            }
+            else if (vel.X < 0) {
+                vel.X = Math.Min(0, vel.X + airResistance);
+            }
+
+        }
 
         // call default update method
         base.Update();

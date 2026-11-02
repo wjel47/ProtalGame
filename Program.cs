@@ -16,23 +16,15 @@ internal static class Program
         Raylib.SetTargetFPS(60);
 
         // initialize game objects
-        Player player = new(new Vector2(50, 50), new Vector2(20, 20));
-        Platform platform = new(new Vector2(0, 400), new Vector2(800, 20));
         Tether tether = new Tether();
+        Player player = new(new Vector2(50, 50), new Vector2(50, 50), tether);
+        Platform platform = new(new Vector2(0, 400), new Vector2(800, 20));
         platforms.Add(platform);
 
         // main game loop
         while (!Raylib.WindowShouldClose())
         {
             // handle inputs
-
-            // get x and y position of cursor
-            Vector2 mousePos = Raylib.GetMousePosition();
-
-            // if left mouse is down
-            if (Raylib.IsMouseButtonDown(MouseButton.Left)) {
-                tether.TryAddingPoint(player);
-            }
 
             // if right mouse button was just pressed
             if (Raylib.IsMouseButtonPressed(MouseButton.Right)) {

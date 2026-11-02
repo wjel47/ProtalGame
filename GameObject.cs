@@ -4,7 +4,7 @@ namespace PortalGame;
 
 public abstract class GameObject {
     public Vector2 pos;
-    protected Vector2 size;
+    public Vector2 size;
     public Vector2 vel;
     protected Vector2 accel;
     float mass;

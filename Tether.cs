@@ -6,15 +6,19 @@ namespace PortalGame;
 public class Tether {
     const int maxPoints = 12;
     const int spacing = 20;
-    const int framesToUnwind = 15;
+    const int framesToUnwind = 30;
+    const int startDrawRange = 50;
     const double overshootFactor = 1.2;
     int curPoint = 0;
     int frameCounter = 0;
 
-    Vector2[] points = new Vector2[maxPoints];
+    public Vector2[] points = new Vector2[maxPoints];
     double[] rotateAmount = new double[maxPoints];
 
-    public void Update() {
+    Vector2 prevEndPointPos;
+    Vector2 endPointVel = new Vector2(0, 0);
+
+    public void Update(Player player) {
         if (Raylib.IsMouseButtonReleased(MouseButton.Left)) {
             if (curPoint > 2) {
                 CalculateRotateAmounts();
@@ -22,14 +26,26 @@ public class Tether {
             }
         }
         if (!Raylib.IsMouseButtonDown(MouseButton.Left)) {
-            // update all the points (todo), then set curPoint to 0 to reset the tether
+
+            // update all the points
             if (curPoint > 2 && frameCounter < framesToUnwind) {
+
+                // track position of end point before updates are applied
+                prevEndPointPos = points[0];
+
+                // rotate current point and all further points
                 for (int i = curPoint - 3; i >= 0; i--) {
-                    // rotate current point and all further points
                     for (int j = i; j >= 0; j--) {
                         points[j] = RotatePointAroundCenter(points[j], points[i+1], rotateAmount[i]);
                     }
                 }
+
+                // get velocity of end point between previous frame and current frame
+                endPointVel = Vector2.Subtract(points[0], prevEndPointPos);
+
+                // drag player along with the end of the tether
+                player.vel = endPointVel;
+
                 frameCounter++;
             }
         }
@@ -38,11 +54,12 @@ public class Tether {
         }
     }
 
-    public void TryAddingPoint() {
+    public void TryAddingPoint(Player player) {
         Vector2 mousePos = Raylib.GetMousePosition();
-        // add first point
-        if (curPoint == 0) {
-            AddPoint(mousePos);
+        Vector2 playerCenter = new Vector2(player.pos.X + player.size.X / 2, player.pos.Y + player.size.Y / 2);
+        // add first point if mouse is within range of player's center
+        if (curPoint == 0 && Vector2.Distance(mousePos, playerCenter) <= startDrawRange) {
+            AddPoint(playerCenter);
         }
         else if (curPoint > 0 && curPoint < maxPoints) {
             // only add a new point once there is enough distance from the previous one
@@ -110,7 +127,7 @@ public class Tether {
 
     public void Draw() {
         for (int i = 0; i < curPoint; i++) {
-            Raylib.DrawCircle((int) points[i].X, (int) points[i].Y, 5, Color.Black);
+            Raylib.DrawCircle((int) points[i].X, (int) points[i].Y, 5, Color.Blue);
         }
     }
 

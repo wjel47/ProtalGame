@@ -17,7 +17,7 @@ internal static class Program
 
         // initialize game objects
         Player player = new(new Vector2(50, 50), new Vector2(20, 20));
-        Platform platform = new(new Vector2(0, 200), new Vector2(200, 20));
+        Platform platform = new(new Vector2(0, 400), new Vector2(800, 20));
         Tether tether = new Tether();
         platforms.Add(platform);
 
@@ -31,8 +31,7 @@ internal static class Program
 
             // if left mouse is down
             if (Raylib.IsMouseButtonDown(MouseButton.Left)) {
-                // TODO: draw the tether
-                tether.TryAddingPoint();
+                tether.TryAddingPoint(player);
             }
 
             // if right mouse button was just pressed
@@ -42,8 +41,9 @@ internal static class Program
 
             // update game
             
+            // TODO: right now, the tether controls some of the player's movement. consider moving all player movement code into the player class.
+            tether.Update(player);
             player.Update();
-            tether.Update();
 
             // draw frame
             Raylib.BeginDrawing();

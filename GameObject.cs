@@ -7,11 +7,18 @@ public abstract class GameObject {
     public Vector2 size;
     public Vector2 vel;
     protected Vector2 accel;
+    protected List<GameObject> otherObjs = new List<GameObject>(); // other objects that this object can interact with, defaults to an empty list
     float mass;
 
     public GameObject(Vector2 pos, Vector2 size) {
         this.pos = pos;
         this.size = size;
+    }
+
+    public GameObject(Vector2 pos, Vector2 size, List<GameObject> otherObjs) {
+        this.pos = pos;
+        this.size = size;
+        this.otherObjs = otherObjs;
     }
 
     public virtual void Update() {
@@ -21,11 +28,11 @@ public abstract class GameObject {
 
         // horizontal movement and collision detection
         pos.X += vel.X;
-        ResolveCollisionsX(Program.platforms);
+        ResolveCollisionsX();
 
         // vertical movement and collision detection
         pos.Y += vel.Y;
-        ResolveCollisionsY(Program.platforms);
+        ResolveCollisionsY();
     }
 
     public abstract void Draw();
@@ -37,7 +44,7 @@ public abstract class GameObject {
             && this.pos.Y < other.pos.Y + other.size.Y;
     }
 
-    private void ResolveCollisionsX(List<GameObject> otherObjs) {
+    private void ResolveCollisionsX() {
         // check current object against every other object
         foreach (GameObject other in otherObjs) {
             if (IsOverlapping(other)) {
@@ -56,7 +63,7 @@ public abstract class GameObject {
 
     }
 
-    private void ResolveCollisionsY(List<GameObject> otherObjs) {
+    private void ResolveCollisionsY() {
         // check current object against every other object
         foreach (GameObject other in otherObjs) {
             if (IsOverlapping(other)) {

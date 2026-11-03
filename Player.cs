@@ -7,7 +7,7 @@ public class Player : GameObject {
     Tether targetTether;
     const float airResistance = 0.5f; // TODO: for prototyping only. maybe this belongs in the GameObject class instead
 
-    public Player(Vector2 pos, Vector2 size, Tether tether) : base(pos, size){
+    public Player(Vector2 pos, Vector2 size, Tether tether, List<GameObject> otherObjs) : base(pos, size, otherObjs){
         targetTether = tether;
     }
 

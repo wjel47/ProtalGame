@@ -3,6 +3,7 @@ using Raylib_cs;
 
 namespace PortalGame;
 
+// starter code for Raylib-cs sourced from https://github.com/raylib-cs/raylib-cs
 internal static class Program
 {
     public static List<GameObject> platforms = new List<GameObject>();
@@ -17,9 +18,11 @@ internal static class Program
 
         // initialize game objects
         Tether tether = new Tether();
-        Player player = new(new Vector2(50, 50), new Vector2(50, 50), tether);
-        Platform platform = new(new Vector2(0, 400), new Vector2(800, 20));
-        platforms.Add(platform);
+        Player player = new(new Vector2(50, 50), new Vector2(50, 50), tether, platforms);
+
+        // temporary platforms for testing
+        platforms.Add( new Platform(new Vector2(0, 400), new Vector2(800, 20)) );
+        platforms.Add( new Platform(new Vector2(300, 200), new Vector2(200, 50)) );
 
         // main game loop
         while (!Raylib.WindowShouldClose())
@@ -42,7 +45,9 @@ internal static class Program
 
             Raylib.ClearBackground(Color.White);
             player.Draw();
-            platform.Draw();
+            foreach (Platform i in platforms) {
+                i.Draw();
+            }
             tether.Draw();
 
             Raylib.EndDrawing();

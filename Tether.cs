@@ -4,9 +4,9 @@ using Raylib_cs;
 namespace PortalGame;
 
 public class Tether {
-    const int maxPoints = 12;
+    const int maxPoints = 20;
     const int spacing = 20;
-    const int framesToUnwind = 30;
+    const int framesToUnwind = 50;
     const int startDrawRange = 50;
     const double overshootFactor = 1.2;
 

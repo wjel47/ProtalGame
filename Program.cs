@@ -13,7 +13,10 @@ internal static class Program
     [STAThread]
     public static void Main()
     {
-        Raylib.InitWindow(800, 480, "Portal Game");
+
+        const int windowWidth = 1200;
+        const int windowHeight = 900;
+        Raylib.InitWindow(windowWidth, windowHeight, "Portal Game");
         Raylib.SetTargetFPS(60);
 
         // initialize game objects
@@ -21,8 +24,9 @@ internal static class Program
         Player player = new(new Vector2(50, 50), new Vector2(50, 50), tether, platforms);
 
         // temporary platforms for testing
-        platforms.Add( new Platform(new Vector2(0, 400), new Vector2(800, 20)) );
-        platforms.Add( new Platform(new Vector2(300, 200), new Vector2(200, 50)) );
+        platforms.Add( new Platform(new Vector2(0, 800), new Vector2(1200, 20)) );
+        platforms.Add( new Platform(new Vector2(300, 600), new Vector2(200, 50)) );
+        platforms.Add( new Platform(new Vector2(600, 400), new Vector2(200, 50)) );
 
         // main game loop
         while (!Raylib.WindowShouldClose())

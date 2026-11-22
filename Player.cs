@@ -5,6 +5,7 @@ namespace PortalGame;
 
 public class Player : GameObject {
     Tether targetTether;
+    const float maxDistFromTether = 50;
     const float airResistance = 0.5f; // TODO: for prototyping only. maybe this belongs in the GameObject class instead
 
     public Player(Vector2 pos, Vector2 size, Tether tether, List<GameObject> otherObjs) : base(pos, size, otherObjs){
@@ -18,6 +19,7 @@ public class Player : GameObject {
             vel = targetTether.endPointVel;
             accel.X = 0;
             accel.Y = 0;
+
         }
         else {
             // TODO: make accel dependent on gravity from physics simulation
@@ -36,50 +38,13 @@ public class Player : GameObject {
 
         // call default update method
         base.Update();
-    }
 
-    protected override void ResolveCollisionsX() {
-        // check current object against every other object
-        foreach (GameObject other in otherObjs) {
-            if (IsOverlapping(other)) {
-                // left side collision
-                if (this.vel.X > 0) {
-                    this.vel.X = 0;
-                    this.pos.X = other.pos.X - this.size.X;
-                }
-                // right side collision
-                else if (this.vel.X < 0) {
-                    this.vel.X = 0;
-                    this.pos.X = other.pos.X + other.size.X;
-                }
-                if (targetTether.isActive) {
-                    targetTether.Reset();
-                }
+        // deactivate tether if player gets too far from the endpoint
+        if (targetTether.isActive) {
+            if (Vector2.Distance(targetTether.points[0], new Vector2(pos.X + size.X / 2, pos.Y + size.Y / 2)) > maxDistFromTether) {
+                targetTether.Reset();
             }
         }
-
-    }
-
-    protected override void ResolveCollisionsY() {
-        // check current object against every other object
-        foreach (GameObject other in otherObjs) {
-            if (IsOverlapping(other)) {
-                // left side collision
-                if (this.vel.Y > 0) {
-                    this.vel.Y = 0;
-                    this.pos.Y = other.pos.Y - this.size.Y;
-                }
-                // right side collision
-                else if (this.vel.Y < 0) {
-                    this.vel.Y = 0;
-                    this.pos.Y = other.pos.Y + other.size.Y;
-                }
-                if (targetTether.isActive) {
-                    targetTether.Reset();
-                }
-            }
-        }
-
     }
 
     public override void Draw() {

@@ -81,7 +81,7 @@ public class Tether {
         frameCounter++;
     }
 
-    private void Reset() {
+    public void Reset() {
         isActive = false;
         curPoint = 0;
     }
@@ -129,17 +129,15 @@ public class Tether {
     }
 
     private bool IsDrawnTetherValid() {
-        // set result to true by default, updates to false if any of the checks fail
-        bool result = true;
 
         // do not create a new tether if one is already active
         if (isActive) {
-            result = false;
+            return false;
         }
 
         // require at least 3 points
         if (curPoint <= 2) {
-            result = false;
+            return false;
         }
 
         // check if the last drawn point to be anchored to a platform
@@ -157,10 +155,10 @@ public class Tether {
         }
 
         if (!isAnchored) {
-            result = false;
+            return false;
         }
 
-        return result;
+        return true;
 
     }
 

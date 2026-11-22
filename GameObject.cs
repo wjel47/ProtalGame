@@ -37,14 +37,14 @@ public abstract class GameObject {
 
     public abstract void Draw();
 
-    private bool IsOverlapping(GameObject other) {
+    protected bool IsOverlapping(GameObject other) {
         return this.pos.X + this.size.X > other.pos.X
             && this.pos.X < other.pos.X + other.size.X
             &&  this.pos.Y + this.size.Y > other.pos.Y
             && this.pos.Y < other.pos.Y + other.size.Y;
     }
 
-    private void ResolveCollisionsX() {
+    protected virtual void ResolveCollisionsX() {
         // check current object against every other object
         foreach (GameObject other in otherObjs) {
             if (IsOverlapping(other)) {
@@ -63,7 +63,7 @@ public abstract class GameObject {
 
     }
 
-    private void ResolveCollisionsY() {
+    protected virtual void ResolveCollisionsY() {
         // check current object against every other object
         foreach (GameObject other in otherObjs) {
             if (IsOverlapping(other)) {

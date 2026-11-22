@@ -38,6 +38,50 @@ public class Player : GameObject {
         base.Update();
     }
 
+    protected override void ResolveCollisionsX() {
+        // check current object against every other object
+        foreach (GameObject other in otherObjs) {
+            if (IsOverlapping(other)) {
+                // left side collision
+                if (this.vel.X > 0) {
+                    this.vel.X = 0;
+                    this.pos.X = other.pos.X - this.size.X;
+                }
+                // right side collision
+                else if (this.vel.X < 0) {
+                    this.vel.X = 0;
+                    this.pos.X = other.pos.X + other.size.X;
+                }
+                if (targetTether.isActive) {
+                    targetTether.Reset();
+                }
+            }
+        }
+
+    }
+
+    protected override void ResolveCollisionsY() {
+        // check current object against every other object
+        foreach (GameObject other in otherObjs) {
+            if (IsOverlapping(other)) {
+                // left side collision
+                if (this.vel.Y > 0) {
+                    this.vel.Y = 0;
+                    this.pos.Y = other.pos.Y - this.size.Y;
+                }
+                // right side collision
+                else if (this.vel.Y < 0) {
+                    this.vel.Y = 0;
+                    this.pos.Y = other.pos.Y + other.size.Y;
+                }
+                if (targetTether.isActive) {
+                    targetTether.Reset();
+                }
+            }
+        }
+
+    }
+
     public override void Draw() {
         Raylib.DrawRectangle((int) pos.X, (int) pos.Y, (int) size.X, (int) size.Y, Color.Black);
     }

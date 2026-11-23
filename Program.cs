@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Text.Json;
 using Raylib_cs;
 
 namespace PortalGame;
@@ -20,13 +21,19 @@ internal static class Program
         Raylib.SetTargetFPS(60);
 
         // initialize game objects
-        Tether tether = new Tether();
-        Player player = new(new Vector2(50, 50), new Vector2(50, 50), tether, platforms);
+        string levelFile = "level.json";
+        string levelJSON = File.ReadAllText(levelFile);
+        Console.WriteLine(levelJSON);
+        LevelData levelData = JsonSerializer.Deserialize<LevelData>(levelJSON)!;
 
-        // temporary platforms for testing
-        platforms.Add( new Platform(new Vector2(0, 800), new Vector2(1200, 20)) );
-        platforms.Add( new Platform(new Vector2(300, 600), new Vector2(200, 50)) );
-        platforms.Add( new Platform(new Vector2(600, 400), new Vector2(200, 50)) );
+        Tether tether = new Tether();
+        Player player = new(new Vector2(levelData.spawnX, levelData.spawnY), new Vector2(50, 50), tether, platforms);
+
+        // load platforms from level data
+        foreach (var i in levelData.platforms) {
+            platforms.Add( new Platform(new Vector2(i[0], i[1]), new Vector2(i[2], i[3])) );
+        }
+        // TODO: also load moving platforms once we get those implemented
 
         // main game loop
         while (!Raylib.WindowShouldClose())
@@ -39,7 +46,7 @@ internal static class Program
             }
 
             // update game
-            
+
             tether.Update(player);
             player.Update();
 

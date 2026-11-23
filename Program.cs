@@ -8,6 +8,7 @@ namespace PortalGame;
 internal static class Program
 {
     public static List<GameObject> platforms = new List<GameObject>();
+    public static Camera2D camera = new Camera2D();
 
     // STAThread is required if you deploy using NativeAOT on Windows
     // See https://github.com/raylib-cs/raylib-cs/issues/301
@@ -23,7 +24,6 @@ internal static class Program
         Raylib.SetTargetFPS(60);
 
         // initialize camera
-        Camera2D camera = new Camera2D();
         camera.Offset = new Vector2(Raylib.GetRenderWidth() / 2, Raylib.GetRenderHeight() / 2);
         camera.Zoom = 1.0f;
 

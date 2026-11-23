@@ -94,7 +94,7 @@ public class Tether {
     public void TryAddingPoint(Player player) {
 
         if (!isActive) {
-            Vector2 mousePos = Raylib.GetMousePosition();
+            Vector2 mousePos = Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), Program.camera);
             Vector2 playerCenter = new Vector2(player.pos.X + player.size.X / 2, player.pos.Y + player.size.Y / 2);
 
             // add first point if mouse is within range of player's center

@@ -6,7 +6,7 @@ namespace PortalGame;
 public class Tether {
     const int maxPoints = 20;
     const int spacing = 20;
-    const int framesToUnwind = 50;
+    int framesToUnwind = 50;
     const int startDrawRange = 50;
     const double overshootFactor = 1.2;
 
@@ -23,10 +23,9 @@ public class Tether {
     public void Update(Player player) {
 
         // if there is no active tether, reset on mouse click
+        // also allows player to cancel their swing by clicking
         if (Raylib.IsMouseButtonPressed(MouseButton.Left)) {
-            if (!isActive) {
-                Reset();
-            }
+            Reset();
         }
 
         // if left mouse is down
@@ -183,6 +182,16 @@ public class Tether {
             }
 
         }
+
+        // estimates the overall curvature of the tether, higher value means a lot of rotation is needed to unwind it
+        double curvature = 0;
+        for (int i = curPoint - 3; i >= 0; i--) {
+            curvature += rotateAmount[i] * i;
+        }
+
+        // make the duration of unwinding dependent on the tether's curvature
+        // this is an arbitrary formula based only on what feels the most natural
+        framesToUnwind = (int) Math.Abs(curvature * 1.5) + 10;
 
         // convert total rotate amount to amount needed each frame
         for (int i = curPoint - 3; i >= 0; i--) {

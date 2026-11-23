@@ -40,7 +40,6 @@ internal static class Program
 
             // update game
             
-            // TODO: right now, the tether controls some of the player's movement. consider moving all player movement code into the player class.
             tether.Update(player);
             player.Update();
 

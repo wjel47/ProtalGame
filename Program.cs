@@ -58,7 +58,9 @@ internal static class Program
 
             tether.Update(player);
             player.Update();
-            camera.Target = new Vector2(player.pos.X + player.size.X / 2, player.pos.Y + player.size.Y / 2);
+
+            // update camera target
+            camera.Target = Vector2.Lerp(camera.Target, new Vector2(player.pos.X + player.size.X / 2, player.pos.Y + player.size.Y / 2), 0.2f);
 
             // draw frame
             Raylib.BeginDrawing();

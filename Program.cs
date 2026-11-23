@@ -20,12 +20,13 @@ internal static class Program
         Raylib.InitWindow(windowWidth, windowHeight, "Portal Game");
         Raylib.SetTargetFPS(60);
 
-        // initialize game objects
+        // load level data from JSON file
         string levelFile = "level.json";
         string levelJSON = File.ReadAllText(levelFile);
         Console.WriteLine(levelJSON);
         LevelData levelData = JsonSerializer.Deserialize<LevelData>(levelJSON)!;
 
+        // initialize game objects
         Tether tether = new Tether();
         Player player = new(new Vector2(levelData.spawnX, levelData.spawnY), new Vector2(50, 50), tether, platforms);
 

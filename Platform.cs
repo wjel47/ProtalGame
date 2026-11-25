@@ -7,7 +7,7 @@ public class Platform : GameObject {
 
     public Platform(Vector2 pos, Vector2 size) : base(pos, size){}
 
-    public override void Update() {
+    public override void Update(float dt) {
         // no updates needed for stationary platform
     }
 

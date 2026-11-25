@@ -16,7 +16,7 @@ public class Player : GameObject {
 
         // cancel all other physics calculations if attached to tether
         if (targetTether.isActive) {
-            vel = targetTether.endPointVel / dt;
+            vel = targetTether.endPointVel;
             accel.X = 0;
             accel.Y = 0;
 

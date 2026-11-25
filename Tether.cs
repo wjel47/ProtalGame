@@ -76,7 +76,7 @@ public class Tether {
         }
 
         // get velocity of end point between previous frame and current frame
-        endPointVel = Vector2.Subtract(points[0], prevEndPointPos);
+        endPointVel = Vector2.Subtract(points[0], prevEndPointPos) / dt;
 
         secsCounter += dt;
     }
@@ -88,7 +88,10 @@ public class Tether {
 
     public void Draw() {
         for (int i = 0; i < curPoint; i++) {
-            Raylib.DrawCircle((int) points[i].X, (int) points[i].Y, 5, Color.Blue);
+            Raylib.DrawCircle((int) points[i].X, (int) points[i].Y, 4, Color.Blue);
+        }
+        for (int i = 0; i < curPoint-1; i++) {
+            Raylib.DrawLineEx(points[i], points[i+1], 8, Color.Blue);
         }
     }
 
@@ -188,15 +191,24 @@ public class Tether {
 
         }
 
-        // estimates the overall curvature of the tether, higher value means a lot of rotation is needed to unwind it
-        double curvature = 0;
-        for (int i = curPoint - 3; i >= 0; i--) {
-            curvature += rotateAmount[i] * i;
+        // simulate the whole unwinding sequence to get the top speed of the end point
+        // we will use this speed to determine how long the real unwinding sequence should last for
+        simulatedPoints = (Vector2[]) points.Clone();
+        float maxEndPointSpeed = 0;
+        const int numSteps = 10;
+        for (int step = 0; step < numSteps; step++) {
+            Vector2 simulatedPrevEndPointPos = simulatedPoints[0];
+            for (int i = curPoint - 3; i >= 0; i--) {
+                for (int j = i; j >= 0; j--) {
+                    double curRotateAmount = rotateAmount[i] / numSteps * overshootFactor;
+                    simulatedPoints[j] = RotatePointAroundCenter(simulatedPoints[j], simulatedPoints[i+1], curRotateAmount);
+                }
+            }
+            maxEndPointSpeed = Math.Max(maxEndPointSpeed, Vector2.Distance(simulatedPoints[0], simulatedPrevEndPointPos) * numSteps);
         }
 
-        // make the duration of unwinding dependent on the tether's curvature
-        // this is an arbitrary formula based only on what feels the most natural
-        secsToUnwind = (float) (Math.Abs(curvature * 1.5) + 10) / 60;
+        // make the duration of unwinding dependent on the tether's max speed
+        secsToUnwind = maxEndPointSpeed / 1200 + 0.2f;
 
     }
 

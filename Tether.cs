@@ -107,7 +107,9 @@ public class Tether {
                 // only add a new point once there is enough distance from the previous one
                 Vector2 prevPoint = points[curPoint-1];
                 float distanceFromPrev = Vector2.Distance(mousePos, prevPoint);
-                if (distanceFromPrev > spacing) {
+
+                // keep adding points until newest point is near mouse cursor
+                while (distanceFromPrev > spacing && curPoint < maxPoints) {
 
                     // normalize distance so all points are evenly spaced
                     Vector2 diff = new Vector2(mousePos.X - prevPoint.X, mousePos.Y - prevPoint.Y);
@@ -115,6 +117,8 @@ public class Tether {
                     Vector2 pos = new Vector2(prevPoint.X + diff.X * spacing, prevPoint.Y + diff.Y * spacing);
 
                     AddPoint(pos);
+                    prevPoint = points[curPoint-1];
+                    distanceFromPrev = Vector2.Distance(mousePos, prevPoint);
                 }
             }
         }

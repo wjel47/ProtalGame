@@ -66,7 +66,7 @@ internal static class Program
 
             // draw frame
             Raylib.BeginDrawing();
-            Raylib.ClearBackground(Color.White);
+            Raylib.ClearBackground(new Color(50, 50, 60));
             Raylib.BeginMode2D(camera);
 
             player.Draw();

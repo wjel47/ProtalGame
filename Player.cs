@@ -48,6 +48,6 @@ public class Player : GameObject {
     }
 
     public override void Draw() {
-        Raylib.DrawRectangle((int) pos.X, (int) pos.Y, (int) size.X, (int) size.Y, Color.Black);
+        Raylib.DrawRectangle((int) pos.X, (int) pos.Y, (int) size.X, (int) size.Y, new Color(255, 200, 255));
     }
 }

@@ -88,10 +88,11 @@ public class Tether {
 
     public void Draw() {
         for (int i = 0; i < curPoint; i++) {
-            Raylib.DrawCircle((int) points[i].X, (int) points[i].Y, 4, Color.Blue);
-        }
-        for (int i = 0; i < curPoint-1; i++) {
-            Raylib.DrawLineEx(points[i], points[i+1], 8, Color.Blue);
+            Color color = Raylib.ColorFromHSV(220 + i * 5, 0.6f, 1.0f);
+            Raylib.DrawCircle((int) points[i].X, (int) points[i].Y, 4, color);
+            if (i < curPoint - 1) {
+                Raylib.DrawLineEx(points[i], points[i+1], 8, color);
+            }
         }
     }
 

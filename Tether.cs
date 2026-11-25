@@ -6,7 +6,6 @@ namespace PortalGame;
 public class Tether {
     const int maxPoints = 20;
     const int spacing = 20;
-    int framesToUnwind = 50;
     float secsToUnwind = 0.8f;
     const int startDrawRange = 50;
     const double overshootFactor = 1.2;
@@ -193,8 +192,7 @@ public class Tether {
 
         // make the duration of unwinding dependent on the tether's curvature
         // this is an arbitrary formula based only on what feels the most natural
-        framesToUnwind = (int) Math.Abs(curvature * 1.5) + 10;
-        secsToUnwind = (float) framesToUnwind / 60;
+        secsToUnwind = (float) (Math.Abs(curvature * 1.5) + 10) / 60;
 
     }
 

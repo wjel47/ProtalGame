@@ -38,7 +38,6 @@ public class Player : GameObject {
 
         // call default update method
         base.Update(dt);
-        Console.WriteLine(vel);
 
         // deactivate tether if player gets too far from the endpoint
         if (targetTether.isActive) {

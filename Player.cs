@@ -6,17 +6,17 @@ namespace PortalGame;
 public class Player : GameObject {
     Tether targetTether;
     const float maxDistFromTether = 50;
-    const float airResistance = 0.5f; // TODO: for prototyping only. maybe this belongs in the GameObject class instead
+    const float airResistance = 1800; // TODO: for prototyping only. maybe this belongs in the GameObject class instead
 
     public Player(Vector2 pos, Vector2 size, Tether tether, List<GameObject> otherObjs) : base(pos, size, otherObjs){
         targetTether = tether;
     }
 
-    public override void Update() {
+    public override void Update(float dt) {
 
         // cancel all other physics calculations if attached to tether
         if (targetTether.isActive) {
-            vel = targetTether.endPointVel;
+            vel = targetTether.endPointVel / dt;
             accel.X = 0;
             accel.Y = 0;
 
@@ -24,20 +24,20 @@ public class Player : GameObject {
         else {
             // TODO: make accel dependent on gravity from physics simulation
 
-            accel.Y = 0.8f;
+            accel.Y = 2880;
 
             // gradually slow down player
             if (vel.X > 0) {
-                vel.X = Math.Max(0, vel.X - airResistance);
+                vel.X = Math.Max(0, vel.X - airResistance * dt);
             }
             else if (vel.X < 0) {
-                vel.X = Math.Min(0, vel.X + airResistance);
+                vel.X = Math.Min(0, vel.X + airResistance * dt);
             }
 
         }
 
         // call default update method
-        base.Update();
+        base.Update(dt);
 
         // deactivate tether if player gets too far from the endpoint
         if (targetTether.isActive) {

@@ -30,7 +30,6 @@ internal static class Program
         // load level data from JSON file
         string levelFile = "level.json";
         string levelJSON = File.ReadAllText(levelFile);
-        Console.WriteLine(levelJSON);
         LevelData levelData = JsonSerializer.Deserialize<LevelData>(levelJSON)!;
 
         // initialize game objects
@@ -55,9 +54,12 @@ internal static class Program
             }
 
             // update game
+            float dt = Raylib.GetFrameTime();
+            // ensure delta time doesn't get too high
+            dt = Math.Min(dt, 0.05f);
 
-            tether.Update(player);
-            player.Update();
+            tether.Update(dt, player);
+            player.Update(dt);
 
             // update camera target
             camera.Target = Vector2.Lerp(camera.Target, new Vector2(player.pos.X + player.size.X / 2, player.pos.Y + player.size.Y / 2), 0.2f);

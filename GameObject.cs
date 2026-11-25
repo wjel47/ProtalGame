@@ -21,17 +21,16 @@ public abstract class GameObject {
         this.otherObjs = otherObjs;
     }
 
-    public virtual void Update() {
+    public virtual void Update(float dt) {
         // apply acceleration
-        vel.X += accel.X;
-        vel.Y += accel.Y;
+        vel += accel * dt;
 
         // horizontal movement and collision detection
-        pos.X += vel.X;
+        pos.X += vel.X * dt;
         ResolveCollisionsX();
 
         // vertical movement and collision detection
-        pos.Y += vel.Y;
+        pos.Y += vel.Y * dt;
         ResolveCollisionsY();
     }
 

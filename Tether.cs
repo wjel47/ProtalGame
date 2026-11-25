@@ -6,12 +6,12 @@ namespace PortalGame;
 public class Tether {
     const int maxPoints = 20;
     const int spacing = 20;
-    int framesToUnwind = 50;
+    float secsToUnwind = 0.8f;
     const int startDrawRange = 50;
     const double overshootFactor = 1.2;
 
     int curPoint = 0;
-    int frameCounter = 0;
+    float secsCounter = 0;
     public bool isActive = false;
 
     public Vector2[] points = new Vector2[maxPoints];
@@ -20,7 +20,7 @@ public class Tether {
     Vector2 prevEndPointPos;
     public Vector2 endPointVel;
 
-    public void Update(Player player) {
+    public void Update(float dt, Player player) {
 
         // if there is no active tether, reset on mouse click
         // also allows player to cancel their swing by clicking
@@ -33,7 +33,7 @@ public class Tether {
             if (!isActive) {
                 // move existing points along with player as the tether is being drawn
                 for (int i = 0; i < curPoint; i++) {
-                    points[i] = Vector2.Add(points[i], player.vel);
+                    points[i] = Vector2.Add(points[i], player.vel * dt);
                 }
                 TryAddingPoint(player);
             }
@@ -43,7 +43,7 @@ public class Tether {
         if (Raylib.IsMouseButtonReleased(MouseButton.Left)) {
             if (IsDrawnTetherValid()) {
                 CalculateRotateAmounts();
-                frameCounter = 0;
+                secsCounter = 0;
                 isActive = true;
             }
             else {
@@ -53,8 +53,8 @@ public class Tether {
 
         if (isActive) {
             // update all the points for the designated animation length
-            if (frameCounter < framesToUnwind) {
-                Unwind();
+            if (secsCounter < secsToUnwind) {
+                Unwind(dt);
             }
             else {
                 Reset();
@@ -63,21 +63,22 @@ public class Tether {
 
     }
 
-    private void Unwind() {
+    private void Unwind(float dt) {
         // track position of end point before updates are applied
         prevEndPointPos = points[0];
 
         // rotate current point and all further points
         for (int i = curPoint - 3; i >= 0; i--) {
             for (int j = i; j >= 0; j--) {
-                points[j] = RotatePointAroundCenter(points[j], points[i+1], rotateAmount[i]);
+                double curRotateAmount = rotateAmount[i] * dt / secsToUnwind * overshootFactor;
+                points[j] = RotatePointAroundCenter(points[j], points[i+1], curRotateAmount);
             }
         }
 
         // get velocity of end point between previous frame and current frame
         endPointVel = Vector2.Subtract(points[0], prevEndPointPos);
 
-        frameCounter++;
+        secsCounter += dt;
     }
 
     public void Reset() {
@@ -106,7 +107,9 @@ public class Tether {
                 // only add a new point once there is enough distance from the previous one
                 Vector2 prevPoint = points[curPoint-1];
                 float distanceFromPrev = Vector2.Distance(mousePos, prevPoint);
-                if (distanceFromPrev > spacing) {
+
+                // keep adding points until newest point is near mouse cursor
+                while (distanceFromPrev > spacing && curPoint < maxPoints) {
 
                     // normalize distance so all points are evenly spaced
                     Vector2 diff = new Vector2(mousePos.X - prevPoint.X, mousePos.Y - prevPoint.Y);
@@ -114,6 +117,8 @@ public class Tether {
                     Vector2 pos = new Vector2(prevPoint.X + diff.X * spacing, prevPoint.Y + diff.Y * spacing);
 
                     AddPoint(pos);
+                    prevPoint = points[curPoint-1];
+                    distanceFromPrev = Vector2.Distance(mousePos, prevPoint);
                 }
             }
         }
@@ -191,14 +196,7 @@ public class Tether {
 
         // make the duration of unwinding dependent on the tether's curvature
         // this is an arbitrary formula based only on what feels the most natural
-        framesToUnwind = (int) Math.Abs(curvature * 1.5) + 10;
-
-        // convert total rotate amount to amount needed each frame
-        for (int i = curPoint - 3; i >= 0; i--) {
-            rotateAmount[i] /= framesToUnwind;
-            // apply a slight overshoot to each point
-            rotateAmount[i] *= overshootFactor;
-        }
+        secsToUnwind = (float) (Math.Abs(curvature * 1.5) + 10) / 60;
 
     }
 

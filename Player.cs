@@ -4,12 +4,11 @@ using System.Numerics;
 namespace PortalGame;
 
 public class Player : GameObject {
-    Tether targetTether;
+    public Tether targetTether;
     const float maxDistFromTether = 50;
     const float airResistance = 1800; // TODO: for prototyping only. maybe this belongs in the GameObject class instead
 
-    public Player(Vector2 pos, Vector2 size, Tether tether, List<GameObject> otherObjs) : base(pos, size, otherObjs){
-        targetTether = tether;
+    public Player(Vector2 pos, Vector2 size, List<GameObject> otherObjs) : base(pos, size, otherObjs){
     }
 
     public override void Update(float dt) {

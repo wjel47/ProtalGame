@@ -4,6 +4,10 @@ using Raylib_cs;
 namespace PortalGame;
 
 public class Tether {
+    Game game; // the game that this tether is a part of
+    List<GameObject> anchorObjs;
+    public Player targetPlayer;
+
     const int maxPoints = 20;
     const int spacing = 20;
     float secsToUnwind = 0.8f;
@@ -20,7 +24,12 @@ public class Tether {
     Vector2 prevEndPointPos;
     public Vector2 endPointVel;
 
-    public void Update(float dt, Player player) {
+    public Tether(Game game) {
+        this.game = game;
+        anchorObjs = game.platforms;
+    }
+
+    public void Update(float dt) {
 
         // if there is no active tether, reset on mouse click
         // also allows player to cancel their swing by clicking
@@ -33,9 +42,9 @@ public class Tether {
             if (!isActive) {
                 // move existing points along with player as the tether is being drawn
                 for (int i = 0; i < curPoint; i++) {
-                    points[i] = Vector2.Add(points[i], player.vel * dt);
+                    points[i] = Vector2.Add(points[i], targetPlayer.vel * dt);
                 }
-                TryAddingPoint(player);
+                TryAddingPoint();
             }
         }
 
@@ -96,11 +105,11 @@ public class Tether {
         }
     }
 
-    public void TryAddingPoint(Player player) {
+    public void TryAddingPoint() {
 
         if (!isActive) {
-            Vector2 mousePos = Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), Program.camera);
-            Vector2 playerCenter = new Vector2(player.pos.X + player.size.X / 2, player.pos.Y + player.size.Y / 2);
+            Vector2 mousePos = Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), game.camera);
+            Vector2 playerCenter = new Vector2(targetPlayer.pos.X + targetPlayer.size.X / 2, targetPlayer.pos.Y + targetPlayer.size.Y / 2);
 
             // add first point if mouse is within range of player's center
             if (curPoint == 0 && Vector2.Distance(mousePos, playerCenter) <= startDrawRange) {
@@ -153,7 +162,7 @@ public class Tether {
         bool isAnchored = false;
         // allow points to be slightly off a platform for lenience
         const int padding = 10;
-        foreach (GameObject platform in Program.platforms) {
+        foreach (GameObject platform in anchorObjs) {
             if (lastPoint.X >= platform.pos.X - padding
                     && lastPoint.X <= platform.pos.X + platform.size.X + padding 
                     && lastPoint.Y >= platform.pos.Y - padding
